@@ -1,0 +1,25 @@
+  CHK     include/linux/version.h
+  HOSTCC  scripts/basic/fixdep
+  CHK     include/generated/utsrelease.h
+make[1]: `include/generated/mach-types.h'는 이미 갱신되었습니다.
+  HOSTCC  scripts/genksyms/genksyms.o
+  CC      scripts/mod/empty.o
+  HOSTCC  scripts/genksyms/lex.lex.o
+  HOSTCC  scripts/selinux/genheaders/genheaders
+  HOSTCC  scripts/kallsyms
+  HOSTCC  scripts/genksyms/parse.tab.o
+gcc: warning: ‘-mcpu=’ is deprecated; use ‘-mtune=’ or ‘-march=’ instead
+cc1: error: unrecognized command line option ‘-mlittle-endian’
+cc1: error: unrecognized command line option ‘-mfpu=neon’
+cc1: error: unrecognized command line option ‘-mno-thumb-interwork’
+cc1: error: unrecognized command line option ‘-marm’
+cc1: error: unrecognized command line option ‘-mfpu=neon’
+scripts/mod/empty.c:1:0: error: unknown ABI (aapcs-linux) for -mabi= switch
+scripts/mod/empty.c:1:0: error: bad value (armv7-a) for -march= switch
+scripts/mod/empty.c:1:0: error: bad value (cortex-a15) for -mtune= switch
+  HOSTLD  scripts/genksyms/genksyms
+make[2]: *** [scripts/mod/empty.o] 오류 1
+make[1]: *** [scripts/mod] 오류 2
+make[1]: *** 끝나지 않은 작업을 기다리고 있습니다....
+  HOSTCC  scripts/selinux/mdp/mdp
+make: *** [scripts] 오류 2

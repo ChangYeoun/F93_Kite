@@ -35,6 +35,7 @@
 
 #include <asm/atomic.h>
 #include <linux/gpio.h>
+#include <linux/syscalls.h>
 
 #include <linux/input/lge_touch_core.h>
 
@@ -1836,6 +1837,30 @@ static void check_log_finger_released(struct lge_touch_data *ts)
 			ts->ts_data.prev_data[id].y_position);
 }
 
+#define BOOSTPULSE "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
+
+static struct touchboost {
+        int boostpulse_fd;
+} boost = {
+        .boostpulse_fd = -1,
+};
+
+static int boostpulse_open(void)
+{
+        if (boost.boostpulse_fd < 0)
+        {
+                boost.boostpulse_fd = sys_open(BOOSTPULSE, O_WRONLY, 0);
+                
+                if (boost.boostpulse_fd < 0)
+                {
+                        pr_info("Error opening %s\n", BOOSTPULSE);
+                        return -1;                
+                }
+        }
+
+        return boost.boostpulse_fd;
+}
+
 /* touch_work_pre_proc
  *
  * Pre-process work at touch_work
@@ -1844,7 +1869,19 @@ static int touch_work_pre_proc(struct lge_touch_data *ts)
 {
 #ifdef CUST_G_TOUCH
 	int ret = 0;
+	int len;
 #endif
+
+	if (boostpulse_open() >= 0)
+	{
+		len = sys_write(boost.boostpulse_fd, "1", sizeof(BOOSTPULSE));
+
+		if (len < 0)
+     		{
+       			pr_info("Error writing to %s\n", BOOSTPULSE);
+		}
+	}  
+
 	atomic_dec(&ts->next_work);
 	ts->ts_data.total_num = 0;
 	ts->int_pin_state = 0;
